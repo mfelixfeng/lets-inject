@@ -3,8 +3,10 @@ package com.github.mfelixfeng;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.spi.Bean;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +47,21 @@ class SimpleBeanManagerTest {
 
         assertNotNull(reference);
         assertTrue(reference instanceof TestBean);
+    }
+
+    @Test
+    void should_get_instance() {
+        simpleBeanManager.register(TestBean.class);
+
+        Object instance = simpleBeanManager.getInstance(TestBean.class);
+
+        assertNotNull(instance);
+        assertTrue(instance instanceof TestBean);
+    }
+
+    @Test
+    void should_throws_exception_for_unregistered_bean() {
+        assertThrows(UnsatisfiedResolutionException.class, ()-> simpleBeanManager.getInstance(TestBean.class));
     }
 
     static class TestBean {

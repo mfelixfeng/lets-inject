@@ -7,6 +7,7 @@ import jakarta.enterprise.context.spi.Contextual;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.spi.AnnotatedField;
 import jakarta.enterprise.inject.spi.AnnotatedMember;
 import jakarta.enterprise.inject.spi.AnnotatedMethod;
@@ -28,7 +29,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -171,11 +171,11 @@ public class SimpleBeanManager implements BeanManager {
 
     @Override
     public Set<Bean<?>> getBeans(Type type, Annotation... annotations) {
-        if (!beanTypes.containsKey(type)) {
+        if (!beans.containsKey(type)) {
             return Set.of();
         }
 
-        Bean<?> bean = beanTypes.get(type);
+        Bean<?> bean = beans.get(type);
         return Set.of(bean);
     }
 
@@ -254,9 +254,17 @@ public class SimpleBeanManager implements BeanManager {
         return false;
     }
 
-    Map<Type, Bean<?>> beanTypes = new HashMap<>();
+    Map<Type, Bean<?>> beans = new HashMap<>();
 
-    public void register(Class<?> beanType) {
-        beanTypes.put(beanType, new SimpleBean<>(beanType));
+    public void register(Class<?> beanClass) {
+        beans.put(beanClass, new SimpleBean<>(beanClass));
+    }
+
+    public Object getInstance(Class<?> beanClass) {
+        Bean<?> bean = beans.get(beanClass);
+        if(bean == null) {
+            throw new UnsatisfiedResolutionException("No bean registered for :" + beanClass.getName());
+        }
+        return getReference(bean, beanClass, createCreationalContext(bean));
     }
 }
