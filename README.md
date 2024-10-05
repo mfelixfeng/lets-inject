@@ -36,7 +36,7 @@ While the project is not yet ready for production use, we welcome developers who
 We're excited about the potential of lets-inject and would love to hear your thoughts or answer any questions:
 
 - Open an [Issue](https://github.com/yourusername/lets-inject/issues) for bug reports, feature requests, or general feedback
-- For more detailed inquiries, email us at developer@letsinject.com
+- For more detailed inquiries, email us at mfelixfeng@gmail.com
 
 ## License 📄
 
