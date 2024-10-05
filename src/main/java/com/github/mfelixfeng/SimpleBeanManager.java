@@ -257,14 +257,14 @@ public class SimpleBeanManager implements BeanManager {
     Map<Type, Bean<?>> beans = new HashMap<>();
 
     public void register(Class<?> beanClass) {
-        beans.put(beanClass, new SimpleBean<>(beanClass));
+        beans.put(beanClass, new SimpleBean<>(beanClass, this));
     }
 
-    public Object getInstance(Class<?> beanClass) {
+    public <T> T getInstance(Class<T> beanClass) {
         Bean<?> bean = beans.get(beanClass);
-        if(bean == null) {
+        if (bean == null) {
             throw new UnsatisfiedResolutionException("No bean registered for :" + beanClass.getName());
         }
-        return getReference(bean, beanClass, createCreationalContext(bean));
+        return beanClass.cast(getReference(bean, beanClass, createCreationalContext(bean)));
     }
 }

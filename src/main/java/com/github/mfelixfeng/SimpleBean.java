@@ -3,19 +3,24 @@ package com.github.mfelixfeng;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Inject;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Set;
 
 public class SimpleBean<T> implements Bean<T> {
     private Class<T> beanType;
+    SimpleBeanManager simpleBeanManager;
 
-    public SimpleBean(Class<T> beanType) {
+    public SimpleBean(Class<T> beanType, SimpleBeanManager simpleBeanManager) {
         this.beanType = beanType;
+        this.simpleBeanManager = simpleBeanManager;
     }
 
     @Override
-    public Class<?> getBeanClass() {
+    public Class<T> getBeanClass() {
         return beanType;
     }
 
@@ -27,7 +32,20 @@ public class SimpleBean<T> implements Bean<T> {
     @Override
     public T create(CreationalContext<T> creationalContext) {
         try {
-            return beanType.getDeclaredConstructor().newInstance();
+            Constructor<?> constructor = Arrays.stream(getBeanClass().getDeclaredConstructors())
+                .filter(c -> c.isAnnotationPresent(Inject.class))
+                .findFirst()
+                .orElseGet(() -> {
+                    try {
+                        return getBeanClass().getDeclaredConstructor();
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+            Object[] params = Arrays.stream(constructor.getParameters()).map(p -> simpleBeanManager.getInstance(p.getType())).toArray();
+
+            return getBeanClass().cast(constructor.newInstance(params));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
