@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.DefinitionException;
 import jakarta.inject.Inject;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,8 +76,34 @@ class SimpleBeanManagerTest {
         assertTrue(instance.dependence instanceof DependentBean);
     }
 
+    @Test
+    void should_throws_exception_for_not_found_dependence() {
+        simpleBeanManager.register(BeanWithDependencies.class);
+
+        assertThrows(UnsatisfiedResolutionException.class, ()-> simpleBeanManager.getInstance(BeanWithDependencies.class));
+    }
+
+    @Test
+    void should_throws_exception_for_multiple_constructor() {
+        simpleBeanManager.register(BeanWithMultipleConstructor.class);
+
+        assertThrows(DefinitionException.class, ()-> simpleBeanManager.getInstance(BeanWithMultipleConstructor.class));
+    }
+
+
+
     static class TestBean {
 
+    }
+
+    static class BeanWithMultipleConstructor {
+        @Inject
+        public BeanWithMultipleConstructor(DependentBean dependence) {
+        }
+
+        @Inject
+        public BeanWithMultipleConstructor(String value) {
+        }
     }
 
     static class BeanWithDependencies {

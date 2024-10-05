@@ -1,11 +1,14 @@
 package com.github.mfelixfeng;
 
 import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.CreationException;
 import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.DefinitionException;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Set;
@@ -32,6 +35,12 @@ public class SimpleBean<T> implements Bean<T> {
     @Override
     public T create(CreationalContext<T> creationalContext) {
         try {
+            Constructor[] constructors = Arrays.stream(getBeanClass().getDeclaredConstructors())
+                .filter(c -> c.isAnnotationPresent(Inject.class)).toArray(Constructor[]::new);
+            if(constructors.length > 1) {
+                throw new DefinitionException("Multiple constructor found in " + getBeanClass().getName());
+            }
+
             Constructor<?> constructor = Arrays.stream(getBeanClass().getDeclaredConstructors())
                 .filter(c -> c.isAnnotationPresent(Inject.class))
                 .findFirst()
@@ -46,8 +55,8 @@ public class SimpleBean<T> implements Bean<T> {
             Object[] params = Arrays.stream(constructor.getParameters()).map(p -> simpleBeanManager.getInstance(p.getType())).toArray();
 
             return getBeanClass().cast(constructor.newInstance(params));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new CreationException(e);
         }
     }
 
