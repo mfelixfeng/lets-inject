@@ -1,4 +1,4 @@
-package com.github.mfelixfeng;
+package com.github.mfelixfeng.letsinject;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.mfelixfeng.letsinject.SimpleBeanManager;
 import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.DefinitionException;

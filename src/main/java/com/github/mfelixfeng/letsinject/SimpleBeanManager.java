@@ -1,4 +1,4 @@
-package com.github.mfelixfeng;
+package com.github.mfelixfeng.letsinject;
 
 import jakarta.el.ELResolver;
 import jakarta.el.ExpressionFactory;

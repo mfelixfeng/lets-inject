@@ -1,4 +1,4 @@
-package com.github.mfelixfeng;
+package com.github.mfelixfeng.letsinject;
 
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.CreationException;
