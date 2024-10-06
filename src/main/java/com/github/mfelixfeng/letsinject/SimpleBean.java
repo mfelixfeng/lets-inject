@@ -37,7 +37,7 @@ public class SimpleBean<T> implements Bean<T> {
         try {
             Constructor[] constructors = Arrays.stream(getBeanClass().getDeclaredConstructors())
                 .filter(c -> c.isAnnotationPresent(Inject.class)).toArray(Constructor[]::new);
-            if(constructors.length > 1) {
+            if (constructors.length > 1) {
                 throw new DefinitionException("Multiple constructor found in " + getBeanClass().getName());
             }
 
@@ -48,7 +48,7 @@ public class SimpleBean<T> implements Bean<T> {
                     try {
                         return getBeanClass().getDeclaredConstructor();
                     } catch (NoSuchMethodException e) {
-                        throw new RuntimeException(e);
+                        throw new DefinitionException("No default constructor found in " + getBeanClass().getName(), e);
                     }
                 });
 

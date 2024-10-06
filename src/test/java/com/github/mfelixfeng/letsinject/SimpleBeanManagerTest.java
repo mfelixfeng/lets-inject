@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.github.mfelixfeng.letsinject.SimpleBeanManager;
+import jakarta.enterprise.inject.CreationException;
 import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.DefinitionException;
@@ -81,16 +81,41 @@ class SimpleBeanManagerTest {
     void should_throws_exception_for_not_found_dependence() {
         simpleBeanManager.register(BeanWithDependencies.class);
 
-        assertThrows(UnsatisfiedResolutionException.class, ()-> simpleBeanManager.getInstance(BeanWithDependencies.class));
+        assertThrows(UnsatisfiedResolutionException.class, () -> simpleBeanManager.getInstance(BeanWithDependencies.class));
     }
 
     @Test
     void should_throws_exception_for_multiple_constructor() {
         simpleBeanManager.register(BeanWithMultipleConstructor.class);
 
-        assertThrows(DefinitionException.class, ()-> simpleBeanManager.getInstance(BeanWithMultipleConstructor.class));
+        assertThrows(DefinitionException.class, () -> simpleBeanManager.getInstance(BeanWithMultipleConstructor.class));
     }
 
+    @Test
+    void should_throws_exception_for_no_default_constructor_bean() {
+        simpleBeanManager.register(NoDefaultConstructorBean.class);
+
+        assertThrows(DefinitionException.class, () -> simpleBeanManager.getInstance(NoDefaultConstructorBean.class));
+    }
+
+    @Test
+    void should_throws_exception_for_private_default_constructor_bean() {
+        simpleBeanManager.register(PrivateConstructorBean.class);
+
+        assertThrows(CreationException.class, () -> simpleBeanManager.getInstance(PrivateConstructorBean.class));
+    }
+
+    static class PrivateConstructorBean {
+        private PrivateConstructorBean() {
+        }
+
+    }
+
+    static class NoDefaultConstructorBean {
+        public NoDefaultConstructorBean(String value) {
+
+        }
+    }
 
 
     static class TestBean {
