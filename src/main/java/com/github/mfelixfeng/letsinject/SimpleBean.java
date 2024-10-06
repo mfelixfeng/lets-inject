@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class SimpleBean<T> implements Bean<T> {
-    private Class<T> beanType;
-    SimpleBeanManager simpleBeanManager;
+    private final Class<T> beanType;
+    private final SimpleBeanManager simpleBeanManager;
 
     public SimpleBean(Class<T> beanType, SimpleBeanManager simpleBeanManager) {
         this.beanType = beanType;
@@ -35,29 +35,46 @@ public class SimpleBean<T> implements Bean<T> {
     @Override
     public T create(CreationalContext<T> creationalContext) {
         try {
-            Constructor[] constructors = Arrays.stream(getBeanClass().getDeclaredConstructors())
-                .filter(c -> c.isAnnotationPresent(Inject.class)).toArray(Constructor[]::new);
-            if (constructors.length > 1) {
-                throw new DefinitionException("Multiple constructor found in " + getBeanClass().getName());
-            }
-
-            Constructor<?> constructor = Arrays.stream(getBeanClass().getDeclaredConstructors())
-                .filter(c -> c.isAnnotationPresent(Inject.class))
-                .findFirst()
-                .orElseGet(() -> {
-                    try {
-                        return getBeanClass().getDeclaredConstructor();
-                    } catch (NoSuchMethodException e) {
-                        throw new DefinitionException("No default constructor found in " + getBeanClass().getName(), e);
-                    }
-                });
-
-            Object[] params = Arrays.stream(constructor.getParameters()).map(p -> simpleBeanManager.getInstance(p.getType())).toArray();
-
-            return getBeanClass().cast(constructor.newInstance(params));
+            Constructor<?> constructor = resolveInjectableConstructor();
+            return instantiateBean(constructor, resolveConstructorParams(constructor));
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new CreationException(e);
         }
+    }
+
+    private T instantiateBean(Constructor<?> constructor, Object[] params) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        return getBeanClass().cast(constructor.newInstance(params));
+    }
+
+    private Object[] resolveConstructorParams(Constructor<?> constructor) {
+        return Arrays.stream(constructor.getParameters()).map(p -> simpleBeanManager.getInstance(p.getType())).toArray();
+    }
+
+    private Constructor<?> resolveInjectableConstructor() {
+        Constructor<?>[] constructors = findConstructorsWithInInjectAnnotation();
+
+        if (constructors.length > 1) {
+            throw new DefinitionException("Multiple constructor found in " + getBeanClass().getName());
+        }
+
+        if (constructors.length == 1) {
+            return constructors[0];
+        }
+
+        return resolveDefaultConstructor();
+    }
+
+    private Constructor<T> resolveDefaultConstructor() {
+        try {
+            return getBeanClass().getDeclaredConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new DefinitionException("No default constructor found in " + getBeanClass().getName(), e);
+        }
+    }
+
+    private Constructor<?>[] findConstructorsWithInInjectAnnotation() {
+        return Arrays.stream(getBeanClass().getDeclaredConstructors())
+            .filter(c -> c.isAnnotationPresent(Inject.class)).toArray(Constructor[]::new);
     }
 
     @Override
