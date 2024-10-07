@@ -24,7 +24,7 @@ class SimpleBeanManagerTest {
     @Nested
     class ConstructorInjectTest {
         @Test
-        void should_inject_dependence_via_constructor() {
+        void should_inject_dependence() {
             simpleBeanManager.register(BeanWithDependencies.class);
             simpleBeanManager.register(DependentBean.class);
 
@@ -95,8 +95,47 @@ class SimpleBeanManagerTest {
         }
     }
 
-    static class TestBean {
+    @Nested
+    class FieldInjectTest {
+        @Test
+        void should_inject_dependence() {
+            simpleBeanManager.register(BeanWithFiledDependence.class);
+            simpleBeanManager.register(DependentBean.class);
 
+            BeanWithFiledDependence instance = simpleBeanManager.getInstance(BeanWithFiledDependence.class);
+
+            assertNotNull(instance);
+            assertNotNull(instance.dependence);
+        }
+
+        @Test
+        void should_inject_private_dependence() {
+            simpleBeanManager.register(BeanWithPrivateFiledDependence.class);
+            simpleBeanManager.register(DependentBean.class);
+
+            BeanWithPrivateFiledDependence instance = simpleBeanManager.getInstance(BeanWithPrivateFiledDependence.class);
+
+            assertNotNull(instance);
+            assertNotNull(instance.dependence);
+        }
+
+        @Test
+        void should_throws_exception_for_not_found_dependence() {
+            simpleBeanManager.register(BeanWithFiledDependence.class);
+
+            assertThrows(UnsatisfiedResolutionException.class, () -> simpleBeanManager.getInstance(BeanWithFiledDependence.class));
+        }
+
+
+        static class BeanWithPrivateFiledDependence {
+            @Inject
+            private DependentBean dependence;
+        }
+
+        static class BeanWithFiledDependence {
+            @Inject
+            DependentBean dependence;
+        }
     }
 
     static class DependentBean {

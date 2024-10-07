@@ -8,6 +8,7 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -37,10 +38,23 @@ public class SimpleBean<T> implements Bean<T> {
     public T create(CreationalContext<T> creationalContext) {
         try {
             Constructor<?> constructor = resolveInjectableConstructor();
-            return instantiateBean(constructor, resolveConstructorParams(constructor));
+
+            return injectField(instantiateBean(constructor, resolveConstructorParams(constructor)));
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new CreationException(e);
         }
+    }
+
+    private T injectField(T instance) throws IllegalAccessException {
+        for (Field field : getBeanClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(Inject.class)) {
+                Object value = beanInstanceProvider.getInstance(field.getType());
+                field.setAccessible(true);
+                field.set(instance, value);
+            }
+        }
+
+        return instance;
     }
 
     private T instantiateBean(Constructor<?> constructor, Object[] params) throws InstantiationException, IllegalAccessException, InvocationTargetException {
