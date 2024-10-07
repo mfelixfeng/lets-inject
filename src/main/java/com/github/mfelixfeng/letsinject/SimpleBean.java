@@ -15,11 +15,11 @@ import java.util.Set;
 
 public class SimpleBean<T> implements Bean<T> {
     private final Class<T> beanType;
-    private final SimpleBeanManager simpleBeanManager;
+    private final BeanInstanceProvider beanInstanceProvider;
 
-    public SimpleBean(Class<T> beanType, SimpleBeanManager simpleBeanManager) {
+    public SimpleBean(Class<T> beanType, BeanInstanceProvider beanInstanceProvider) {
         this.beanType = beanType;
-        this.simpleBeanManager = simpleBeanManager;
+        this.beanInstanceProvider = beanInstanceProvider;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class SimpleBean<T> implements Bean<T> {
     }
 
     private Object[] resolveConstructorParams(Constructor<?> constructor) {
-        return Arrays.stream(constructor.getParameters()).map(p -> simpleBeanManager.getInstance(p.getType())).toArray();
+        return Arrays.stream(constructor.getParameters()).map(p -> beanInstanceProvider.getInstance(p.getType())).toArray();
     }
 
     private Constructor<?> resolveInjectableConstructor() {

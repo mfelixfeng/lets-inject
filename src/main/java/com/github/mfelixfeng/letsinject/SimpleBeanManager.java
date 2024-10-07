@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SimpleBeanManager implements BeanManager {
+public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
     @Override
     public Object getInjectableReference(InjectionPoint injectionPoint, CreationalContext<?> creationalContext) {
         return null;
@@ -260,6 +260,7 @@ public class SimpleBeanManager implements BeanManager {
         beans.put(beanClass, new SimpleBean<>(beanClass, this));
     }
 
+    @Override
     public <T> T getInstance(Class<T> beanClass) {
         Bean<?> bean = beans.get(beanClass);
         if (bean == null) {
