@@ -28,6 +28,7 @@ import jakarta.enterprise.inject.spi.ProducerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public List<Decorator<?>> resolveDecorators(Set<Type> set, Annotation... annotations) {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -61,12 +62,12 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public Set<Annotation> getInterceptorBindingDefinition(Class<? extends Annotation> aClass) {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
     public Set<Annotation> getStereotypeDefinition(Class<? extends Annotation> aClass) {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
@@ -172,7 +173,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
     @Override
     public Set<Bean<?>> getBeans(Type type, Annotation... annotations) {
         if (!beans.containsKey(type)) {
-            return Set.of();
+            return Collections.EMPTY_SET;
         }
 
         Bean<?> bean = beans.get(type);
@@ -181,7 +182,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public Set<Bean<?>> getBeans(String s) {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
@@ -191,12 +192,12 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(T t, Annotation... annotations) {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
     public List<Interceptor<?>> resolveInterceptors(InterceptionType interceptionType, Annotation... annotations) {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -231,7 +232,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public Collection<Context> getContexts(Class<? extends Annotation> aClass) {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Override

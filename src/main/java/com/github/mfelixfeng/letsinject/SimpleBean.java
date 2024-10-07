@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 public class SimpleBean<T> implements Bean<T> {
@@ -29,7 +30,7 @@ public class SimpleBean<T> implements Bean<T> {
 
     @Override
     public Set<InjectionPoint> getInjectionPoints() {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
@@ -84,12 +85,12 @@ public class SimpleBean<T> implements Bean<T> {
 
     @Override
     public Set<Type> getTypes() {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
     public Set<Annotation> getQualifiers() {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
@@ -104,7 +105,7 @@ public class SimpleBean<T> implements Bean<T> {
 
     @Override
     public Set<Class<? extends Annotation>> getStereotypes() {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     @Override
