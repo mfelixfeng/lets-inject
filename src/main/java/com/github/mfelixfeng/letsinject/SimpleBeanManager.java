@@ -90,11 +90,13 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
         return 0;
     }
 
+    @Deprecated
     @Override
     public ELResolver getELResolver() {
         return null;
     }
 
+    @Deprecated
     @Override
     public ExpressionFactory wrapExpressionFactory(ExpressionFactory expressionFactory) {
         return null;
