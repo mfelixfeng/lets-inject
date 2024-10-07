@@ -30,7 +30,7 @@ public class SimpleBean<T> implements Bean<T> {
 
     @Override
     public Set<InjectionPoint> getInjectionPoints() {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
@@ -85,12 +85,12 @@ public class SimpleBean<T> implements Bean<T> {
 
     @Override
     public Set<Type> getTypes() {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
     public Set<Annotation> getQualifiers() {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class SimpleBean<T> implements Bean<T> {
 
     @Override
     public Set<Class<? extends Annotation>> getStereotypes() {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override

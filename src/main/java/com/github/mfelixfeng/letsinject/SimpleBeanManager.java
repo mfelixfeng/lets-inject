@@ -52,7 +52,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public List<Decorator<?>> resolveDecorators(Set<Type> set, Annotation... annotations) {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -62,12 +62,12 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public Set<Annotation> getInterceptorBindingDefinition(Class<? extends Annotation> aClass) {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
     public Set<Annotation> getStereotypeDefinition(Class<? extends Annotation> aClass) {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
@@ -173,7 +173,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
     @Override
     public Set<Bean<?>> getBeans(Type type, Annotation... annotations) {
         if (!beans.containsKey(type)) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         Bean<?> bean = beans.get(type);
@@ -182,7 +182,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public Set<Bean<?>> getBeans(String s) {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
@@ -192,12 +192,12 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(T t, Annotation... annotations) {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
     public List<Interceptor<?>> resolveInterceptors(InterceptionType interceptionType, Annotation... annotations) {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -232,7 +232,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public Collection<Context> getContexts(Class<? extends Annotation> aClass) {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
