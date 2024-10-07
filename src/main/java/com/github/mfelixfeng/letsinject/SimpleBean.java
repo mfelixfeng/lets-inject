@@ -80,7 +80,7 @@ public class SimpleBean<T> implements Bean<T> {
 
     @Override
     public void destroy(T t, CreationalContext<T> creationalContext) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override

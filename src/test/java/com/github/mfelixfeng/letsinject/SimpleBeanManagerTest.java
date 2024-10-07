@@ -30,6 +30,7 @@ class SimpleBeanManagerTest {
 
             BeanWithDependencies instance = simpleBeanManager.getInstance(BeanWithDependencies.class);
             assertNotNull(instance);
+            assertNotNull(instance.dependence);
         }
 
         @Test
@@ -75,10 +76,12 @@ class SimpleBeanManagerTest {
         static class BeanWithMultipleConstructor {
             @Inject
             public BeanWithMultipleConstructor(DependentBean dependence) {
+                //for test
             }
 
             @Inject
             public BeanWithMultipleConstructor(String value) {
+                //for test
             }
         }
 

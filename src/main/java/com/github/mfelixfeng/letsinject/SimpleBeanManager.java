@@ -47,7 +47,7 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
 
     @Override
     public void validate(InjectionPoint injectionPoint) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -90,13 +90,13 @@ public class SimpleBeanManager implements BeanManager, BeanInstanceProvider {
         return 0;
     }
 
-    @Deprecated
+    @Deprecated(since="4.1", forRemoval=true)
     @Override
     public ELResolver getELResolver() {
         return null;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval=true)
     @Override
     public ExpressionFactory wrapExpressionFactory(ExpressionFactory expressionFactory) {
         return null;
