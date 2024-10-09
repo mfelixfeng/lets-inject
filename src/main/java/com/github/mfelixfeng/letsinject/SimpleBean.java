@@ -10,6 +10,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,10 +40,29 @@ public class SimpleBean<T> implements Bean<T> {
         try {
             Constructor<?> constructor = resolveInjectableConstructor();
 
-            return injectField(instantiateBean(constructor, resolveConstructorParams(constructor)));
+            return injectMethod(injectField(instantiateBean(constructor, resolveConstructorParams(constructor))));
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new CreationException(e);
         }
+    }
+
+    private T injectMethod(T instance) {
+        Method[] injectableMethods = Arrays.stream(getBeanClass().getDeclaredMethods())
+            .filter(m -> m.isAnnotationPresent(Inject.class))
+            .toArray(Method[]::new);
+
+        for(Method injectableMethod: injectableMethods) {
+            Object[] params = Arrays.stream(injectableMethod.getParameters()).map(p -> beanInstanceProvider.getInstance(p.getType())).toArray();
+            try {
+                injectableMethod.setAccessible(true);
+                injectableMethod.invoke(instance, params);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return instance;
     }
 
     private T injectField(T instance) throws IllegalAccessException {

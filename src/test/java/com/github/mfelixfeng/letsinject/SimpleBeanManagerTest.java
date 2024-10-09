@@ -138,6 +138,54 @@ class SimpleBeanManagerTest {
         }
     }
 
+    @Nested
+    class InitializerMethodInjectTest {
+
+        @Test
+        void should_inject_dependence() {
+            simpleBeanManager.register(BeanWithInPrivateInitializerMethodInject.class);
+            simpleBeanManager.register(DependentBean.class);
+
+            BeanWithInPrivateInitializerMethodInject instance = simpleBeanManager.getInstance(BeanWithInPrivateInitializerMethodInject.class);
+            assertNotNull(instance);
+            assertNotNull(instance.dependence);
+        }
+
+        @Test
+        void should_throws_exception_for_not_found_dependence() {
+            simpleBeanManager.register(BeanWithInPrivateInitializerMethodInject.class);
+
+            assertThrows(UnsatisfiedResolutionException.class, ()-> simpleBeanManager.getInstance(BeanWithInPrivateInitializerMethodInject.class));
+        }
+
+        @Test
+        void should_inject_private_dependence() {
+            simpleBeanManager.register(BeanWithInPrivateInitializerMethodInject.class);
+            simpleBeanManager.register(DependentBean.class);
+
+            BeanWithInPrivateInitializerMethodInject instance = simpleBeanManager.getInstance(BeanWithInPrivateInitializerMethodInject.class);
+            assertNotNull(instance);
+            assertNotNull(instance.dependence);
+        }
+
+        static class BeanWithInPrivateInitializerMethodInject {
+            private DependentBean dependence;
+
+            @Inject
+            private void setDependence(DependentBean dependence) {
+                this.dependence = dependence;
+            }
+        }
+
+        static class BeanWithInInitializerMethodInject {
+            private DependentBean dependence;
+
+            @Inject
+            public void setDependence(DependentBean dependence) {
+                this.dependence = dependence;
+            }
+        }
+    }
     static class DependentBean {
 
     }
