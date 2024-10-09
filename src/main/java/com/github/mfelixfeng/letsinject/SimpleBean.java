@@ -2,12 +2,14 @@ package com.github.mfelixfeng.letsinject;
 
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.CreationException;
+import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.DefinitionException;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,29 +42,37 @@ public class SimpleBean<T> implements Bean<T> {
         try {
             Constructor<?> constructor = resolveInjectableConstructor();
 
-            return injectMethod(injectField(instantiateBean(constructor, resolveConstructorParams(constructor))));
+            return injectMethod(injectField(instantiateBean(constructor, resolveParams(constructor))));
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new CreationException(e);
         }
     }
 
     private T injectMethod(T instance) {
-        Method[] injectableMethods = Arrays.stream(getBeanClass().getDeclaredMethods())
+        Arrays.stream(resolveInjectableMethods()).forEach(m -> invokeMethod(instance, m));
+
+        return instance;
+    }
+
+    private void invokeMethod(T instance, Method injectableMethod) {
+        try {
+            injectableMethod.setAccessible(true);
+            injectableMethod.invoke(instance, resolveParams(injectableMethod));
+        } catch (UnsatisfiedResolutionException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CreationException(String.format("Error invoke method in %s on %s", getBeanClass().getName(), injectableMethod.getName()), e);
+        }
+    }
+
+    private Object[] resolveParams(Executable injectableMethod) {
+        return Arrays.stream(injectableMethod.getParameters()).map(p -> beanInstanceProvider.getInstance(p.getType())).toArray();
+    }
+
+    private Method[] resolveInjectableMethods() {
+        return Arrays.stream(getBeanClass().getDeclaredMethods())
             .filter(m -> m.isAnnotationPresent(Inject.class))
             .toArray(Method[]::new);
-
-        for (Method injectableMethod : injectableMethods) {
-            Object[] params = Arrays.stream(injectableMethod.getParameters()).map(p -> beanInstanceProvider.getInstance(p.getType())).toArray();
-            try {
-                injectableMethod.setAccessible(true);
-                injectableMethod.invoke(instance, params);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return instance;
     }
 
     private T injectField(T instance) throws IllegalAccessException {
@@ -79,10 +89,6 @@ public class SimpleBean<T> implements Bean<T> {
 
     private T instantiateBean(Constructor<?> constructor, Object[] params) throws InstantiationException, IllegalAccessException, InvocationTargetException {
         return getBeanClass().cast(constructor.newInstance(params));
-    }
-
-    private Object[] resolveConstructorParams(Constructor<?> constructor) {
-        return Arrays.stream(constructor.getParameters()).map(p -> beanInstanceProvider.getInstance(p.getType())).toArray();
     }
 
     private Constructor<?> resolveInjectableConstructor() {

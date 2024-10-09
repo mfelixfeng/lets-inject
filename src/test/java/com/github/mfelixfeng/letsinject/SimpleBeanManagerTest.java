@@ -168,6 +168,21 @@ class SimpleBeanManagerTest {
             assertNotNull(instance.dependence);
         }
 
+        @Test
+        void should_throws_exception_for_failing_initializer_method() {
+            simpleBeanManager.register(BeanWithFailingInitializerMethod.class);
+            simpleBeanManager.register(DependentBean.class);
+
+            assertThrows(CreationException.class, () -> simpleBeanManager.getInstance(BeanWithFailingInitializerMethod.class));
+        }
+
+        static class BeanWithFailingInitializerMethod {
+            @Inject
+            private void setDependence(DependentBean dependence) {
+                throw new RuntimeException();
+            }
+        }
+
         static class BeanWithInPrivateInitializerMethodInject {
             private DependentBean dependence;
 
