@@ -155,7 +155,7 @@ class SimpleBeanManagerTest {
         void should_throws_exception_for_not_found_dependence() {
             simpleBeanManager.register(BeanWithInPrivateInitializerMethodInject.class);
 
-            assertThrows(UnsatisfiedResolutionException.class, ()-> simpleBeanManager.getInstance(BeanWithInPrivateInitializerMethodInject.class));
+            assertThrows(UnsatisfiedResolutionException.class, () -> simpleBeanManager.getInstance(BeanWithInPrivateInitializerMethodInject.class));
         }
 
         @Test
@@ -186,6 +186,7 @@ class SimpleBeanManagerTest {
             }
         }
     }
+
     static class DependentBean {
 
     }

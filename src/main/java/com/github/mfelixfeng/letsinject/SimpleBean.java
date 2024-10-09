@@ -51,7 +51,7 @@ public class SimpleBean<T> implements Bean<T> {
             .filter(m -> m.isAnnotationPresent(Inject.class))
             .toArray(Method[]::new);
 
-        for(Method injectableMethod: injectableMethods) {
+        for (Method injectableMethod : injectableMethods) {
             Object[] params = Arrays.stream(injectableMethod.getParameters()).map(p -> beanInstanceProvider.getInstance(p.getType())).toArray();
             try {
                 injectableMethod.setAccessible(true);
