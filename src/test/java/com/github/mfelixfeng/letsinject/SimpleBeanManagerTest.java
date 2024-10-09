@@ -143,10 +143,10 @@ class SimpleBeanManagerTest {
 
         @Test
         void should_inject_dependence() {
-            simpleBeanManager.register(BeanWithInPrivateInitializerMethodInject.class);
+            simpleBeanManager.register(BeanWithInInitializerMethodInject.class);
             simpleBeanManager.register(DependentBean.class);
 
-            BeanWithInPrivateInitializerMethodInject instance = simpleBeanManager.getInstance(BeanWithInPrivateInitializerMethodInject.class);
+            BeanWithInInitializerMethodInject instance = simpleBeanManager.getInstance(BeanWithInInitializerMethodInject.class);
             assertNotNull(instance);
             assertNotNull(instance.dependence);
         }
