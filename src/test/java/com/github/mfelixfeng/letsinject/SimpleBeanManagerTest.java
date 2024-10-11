@@ -253,6 +253,16 @@ class SimpleBeanManagerTest {
         }
 
         @Test
+        void should_inject_protected_dependence() {
+            simpleBeanManager.register(BeanWithInProtectedInitializerMethod.class);
+            simpleBeanManager.register(DependentBean.class);
+
+            BeanWithInProtectedInitializerMethod instance = simpleBeanManager.getInstance(BeanWithInProtectedInitializerMethod.class);
+            assertNotNull(instance);
+            assertNotNull(instance.dependence);
+        }
+
+        @Test
         void should_throws_exception_for_failing_initializer_method() {
             simpleBeanManager.register(BeanWithFailingInitializerMethod.class);
             simpleBeanManager.register(DependentBean.class);
@@ -272,6 +282,15 @@ class SimpleBeanManagerTest {
 
             @Inject
             private void setDependence(DependentBean dependence) {
+                this.dependence = dependence;
+            }
+        }
+
+        static class BeanWithInProtectedInitializerMethod {
+            private DependentBean dependence;
+
+            @Inject
+            protected void setDependence(DependentBean dependence) {
                 this.dependence = dependence;
             }
         }
